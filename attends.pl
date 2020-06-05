@@ -180,6 +180,11 @@ course(im216).
 course(im217).
 course(im218).
 
+% students list
+
+students(Sorted) :-
+    findall(S,attends(S,_),List), sort(List, Sorted).
+
 % create a full-week list
 
 full_week(X,Y,Z,R) :-
@@ -198,4 +203,14 @@ schedule(A,B,C) :-
     X\=K, X\=L, X\=M, X\=R, X\=T, Y\=K, Y\=L, Y\=M, Y\=R, Y\=T,
     Z\=K, Z\=L, Z\=M, Z\=R, Z\=T, K\=R, K\=T, L\=R, L\=T, M\=R, M\=T.
 
-    
+% check if a student S is unhappy with the program (A,B, the full weeks)
+
+unhappy(S, A, B) :-
+    full_week(X,Y,Z,A), full_week(K,L,M,B),
+    ((attends(S,X), attends(S,Y), attends(S,Z));
+    (attends(S,K), attends(S,L), attends(S,M))).
+
+% create the schedule_errors predicate
+
+schedule_errors(A,B,C,E) :-
+    schedule(A,B,C), aggregate_all(count, unhappy(_,A,B), E).
