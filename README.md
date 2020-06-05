@@ -3,7 +3,7 @@
 ## Exam Schedule Optimization
 
 A program to find the best possible exam schedule for students, based on their selected modules.
-_____
+
 This is a project for university module ***Computational Logic And Logic Programming***, so as to learn the basics of ***Prolog*** programming language
 
 #### Authors:
