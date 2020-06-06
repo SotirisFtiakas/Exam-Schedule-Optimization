@@ -265,3 +265,28 @@ maximum_score_schedule(A,B,C,E,S) :-
     S=Maximum,
     minimal_schedule_errors(A,B,C,E).
     
+score_week_2(W,R) :-
+    half_week(X,Y,W),
+    aggregate_all(count, ((attends(S,X), attends(S,Y))), Count1),
+	aggregate_all(count, (attends(S,Y), not(attends(S,X))), Count2),
+	aggregate_all(count, ((attends(S,X), not(attends(S,Y)))), Count3),
+	%aggregate_all(count, ((not(attends(S,X)), not(attends(S,Y)))), Count4),
+    R is Count1 + Count2*7 + Count3*7.
+
+score_week(W,R) :-
+    full_week(X,Y,Z,W),
+    %aggregate_all(count, ((attends(S,X), attends(S,Y), attends(S,Z))), Count0),
+    aggregate_all(count, ((attends(S,X), attends(S,Y), not(attends(S,Z)))), Count1),
+	aggregate_all(count, (attends(S,Y), attends(S,Z), not(attends(S,X))), Count2),
+	aggregate_all(count, (attends(S,X), attends(S,Z), not(attends(S,Y))), Count3),
+	aggregate_all(count, ((attends(S,X), not(attends(S,Y)), not(attends(S,Z)))), Count4),
+	aggregate_all(count, ((attends(S,Y), not(attends(S,X)), not(attends(S,Z)))), Count5),
+	aggregate_all(count, ((attends(S,Z), not(attends(S,X)), not(attends(S,Y)))), Count6),
+	%aggregate_all(count, ((not(attends(S,X)), not(attends(S,Y)), not(attends(S,Z)))), Count7),
+    R is Count1 + Count2 + Count3*3 + Count4*7 + Count5*7 + Count6*7.% + Count7*0.
+
+score_schedule(A,B,C,S) :-
+    score_week(A,S1), 
+    score_week(B,S2),
+    score_week_2(C,S3),
+    S is S1+S2+S3.
