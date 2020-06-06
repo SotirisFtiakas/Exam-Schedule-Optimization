@@ -221,3 +221,47 @@ minimal_schedule_errors(A,B,C,E) :-
     aggregate_all(min(E), schedule_errors(A,B,C,E), Minimum),  % find minimum E value 
     schedule_errors(A,B,C,E),
     E=Minimum.
+
+% create the score_schedule predicate
+
+score_schedule(A,B,C,S) :-
+    minimal_schedule_errors(A,B,C,_),
+    aggregate_all(sum(R), (points(_,A,B,C,R)), S).
+
+% calculate the points of a schedule for a specific student
+
+points(S,A,B,C,R) :-
+
+    nth0(0, A, ResA0),nth0(1, A, ResA1),nth0(2, A, ResA2),
+    ((attends(S,ResA0),attends(S,ResA1),not(attends(S,ResA2)),RA is 1);
+    (not(attends(S,ResA0)),attends(S,ResA1),attends(S,ResA2),RA is 1);
+    (attends(S,ResA0),not(attends(S,ResA1)),attends(S,ResA2),RA is 3);
+    (attends(S,ResA0),not(attends(S,ResA1)),not(attends(S,ResA2)),RA is 7);
+    (not(attends(S,ResA0)),not(attends(S,ResA1)),attends(S,ResA2),RA is 7);
+    (not(attends(S,ResA0)),attends(S,ResA1),not(attends(S,ResA2)),RA is 7);
+    (not(attends(S,ResA0)),not(attends(S,ResA1)),not(attends(S,ResA2)),RA is 0)),
+    
+    nth0(0, B, ResB0),nth0(1, B, ResB1),nth0(2, B, ResB2),
+    ((attends(S,ResB0),attends(S,ResB1),not(attends(S,ResB2)),RB is 1);
+    (not(attends(S,ResB0)),attends(S,ResB1),attends(S,ResB2),RB is 1);
+    (attends(S,ResB0),not(attends(S,ResB1)),attends(S,ResB2),RB is 3);
+    (attends(S,ResB0),not(attends(S,ResB1)),not(attends(S,ResB2)),RB is 7);
+    (not(attends(S,ResB0)),not(attends(S,ResB1)),attends(S,ResB2),RB is 7);
+    (not(attends(S,ResB0)),attends(S,ResB1),not(attends(S,ResB2)),RB is 7);
+    (not(attends(S,ResB0)),not(attends(S,ResB1)),not(attends(S,ResB2)),RB is 0)),
+    
+    nth0(0, C, ResC0), nth0(1, C, ResC1),
+    ((attends(S,ResC0),attends(S,ResC1),RC is 1);
+    (attends(S,ResC0),not(attends(S,ResC1)),RC is 7);
+    (not(attends(S,ResC0)),attends(S,ResC1),RC is 7)),
+
+	R is RA+RB+RC.
+    
+% calculate the maximum_score_schedule predicate
+
+maximum_score_schedule(A,B,C,E,S) :-
+    aggregate_all(max(S), score_schedule(A,B,C,S), Maximum),  % find maximum S value 
+    score_schedule(A,B,C,S),
+    S=Maximum,
+    minimal_schedule_errors(A,B,C,E).
+    
