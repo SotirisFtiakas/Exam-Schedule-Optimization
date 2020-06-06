@@ -214,3 +214,10 @@ unhappy(S, A, B) :-
 
 schedule_errors(A,B,C,E) :-
     schedule(A,B,C), aggregate_all(count, unhappy(_,A,B), E).
+
+% create the minimum_schedule_errors predicate
+
+minimal_schedule_errors(A,B,C,E) :-
+    aggregate_all(min(E), schedule_errors(A,B,C,E), Minimum),  % find minimum E value 
+    schedule_errors(A,B,C,E),
+    E=Minimum.
